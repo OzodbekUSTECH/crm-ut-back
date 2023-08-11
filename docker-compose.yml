@@ -8,8 +8,8 @@ services:
       - .:/app
     ports:
       - 8008:8000
-    depends_on:
-      - db  # Indic
+    # depends_on:
+      # - db  # Indic
   # aiogram:
   #   build: .
   #   command: python -u bot.py  # Update the path to bot.py
@@ -17,21 +17,21 @@ services:
   #     - .:/app  # Map the telegram folder to the container's /telegram directory
   #   depends_on:
   #     - db
-  db:
-    image: postgres:13.3
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_DB: postgres        # Replace 'testbot' with your desired database name
-      POSTGRES_USER: postgres    # Replace 'postgres' with your desired username
-      POSTGRES_PASSWORD: 77girado  # Replace '77girado' with your desired password
-    ports:
-      - "5432:5432"   # Expose port 5432 on the host to connect to PostgreSQL
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+#   db:
+#     image: postgres:13.3
+#     container_name: postgres_db
+#     restart: always
+#     environment:
+#       POSTGRES_DB: postgres        # Replace 'testbot' with your desired database name
+#       POSTGRES_USER: postgres    # Replace 'postgres' with your desired username
+#       POSTGRES_PASSWORD: 77girado  # Replace '77girado' with your desired password
+#     ports:
+#       - "5432:5432"   # Expose port 5432 on the host to connect to PostgreSQL
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:
 
 
   
