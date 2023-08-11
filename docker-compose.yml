@@ -1,11 +1,9 @@
-version: '3.8'
-
+version: '3'
 services:
   web:
-    build: .
-    command: python main.py
-    volumes:
-      - .:/code
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 8008:8000
     # depends_on:
