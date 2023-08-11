@@ -5,7 +5,7 @@ FROM python:3.11.1-slim
 ENV TZ=Asia/Tashkent
 
 # set work directory
-WORKDIR /app
+WORKDIR /code
 
 # set env variables
 ENV PYTHONDONTWRITEBYTECODE 1
