@@ -19,4 +19,5 @@ RUN pip install -r requirements.txt
 # copy project
 COPY . .
 
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker"]
+CMD ["alembic", "upgrade", "head", "&&", "gunicorn", "-b", "0.0.0.0:8000", "main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker"]
+
