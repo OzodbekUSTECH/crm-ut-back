@@ -18,6 +18,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8008:8000
+    command: sh -c "alembic upgrade head && gunicorn -b 0.0.0.0:8000 main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker"
     depends_on:
       - db
 
