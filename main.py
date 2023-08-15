@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from app.api import all_routers
 
-app = FastAPI(title="Market place by Minzifa Travel")
+app = FastAPI(title="CRM UT")
 
 for router in all_routers:
     app.include_router(router, prefix='/v1')
