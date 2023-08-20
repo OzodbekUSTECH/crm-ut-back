@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from fastapi import Query
 from sqlalchemy import insert, select, update, delete
-from models import User
+from app.models import User
 
 
 class Pagination:
