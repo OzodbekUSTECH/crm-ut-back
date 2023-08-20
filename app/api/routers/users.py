@@ -38,7 +38,6 @@ async def login_in(
     return await users_service.authenticate_user(form_data.username, form_data.password)
 
 
-
 @router.get('', name="get_all_users", response_model=list[UserSchema])
 async def get_all_users_data(
     pagination: Annotated[Pagination, Depends()],

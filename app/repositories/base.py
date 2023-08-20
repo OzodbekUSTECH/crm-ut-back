@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from fastapi import Query
 from sqlalchemy import insert, select, update, delete
+from models import User
 
 
 class Pagination:
@@ -20,9 +21,10 @@ class Pagination:
 
 
 class BaseRepository:
-    def __init__(self, session: AsyncSession, model:DeclarativeMeta):
+    def __init__(self, session: AsyncSession, model:DeclarativeMeta, current_user: User = None):
         self.session = session
         self.model = model
+        self.current_user = current_user
 
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)

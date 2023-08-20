@@ -7,6 +7,8 @@ from fastapi import HTTPException, status
 from datetime import timedelta
 from jose import JWTError
 from datetime import datetime
+from utils.exceptions import CustomExceptions
+import httpx
 
 class UsersService:
     def __init__(self, users_repo: UsersRepository):
@@ -15,7 +17,7 @@ class UsersService:
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         existing_user = await self.users_repo.get_by_email(user_data.email)
         if existing_user:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already registered")
+            raise CustomExceptions.conflict("Already exists user with this email")
 
         hashed_password = PasswordHandler.hash(user_data.password)
 
@@ -43,11 +45,7 @@ class UsersService:
         user = await self.users_repo.get_by_email(email)
             
         if not user or not PasswordHandler.verify(password, user.password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            raise CustomExceptions.unauthorized("Incorrect email or password")
 
         access_token_expires = timedelta(minutes=JWTHandler.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -59,11 +57,7 @@ class UsersService:
     
     
     async def get_current_user(self, token: str) -> UserSchema:
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,   
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        credentials_exception = CustomExceptions.unauthorized("Could not validate credentials")
         try:
             payload = await JWTHandler.decode(token)
             email: str = payload.get("email")  # "sub" is the key used by JWT to represent the subject (usually user ID or email)
@@ -101,4 +95,15 @@ class UsersService:
         
 
     
-    
+    # async def parse_all_users(self, url: str):
+    #     async with httpx.AsyncClient() as client:
+    #         response = await client.get(url)
+    #         response.raise_for_status()
+    #         users = response.json()
+
+    #         for user_data in users:
+    #             user_dict = {
+    #                 "email": user_data.get("email", user_data.get("mail", user_data.get("email_address", None))),
+    #                 "password": "$2b$12$1c31RxAswu2qzs7l.erkbO2ucuj6mSv7Ncv3dDB5WYkIdERHz87i.",
+    #             }
+    #             await self.users_repo.create_one(user_dict)
