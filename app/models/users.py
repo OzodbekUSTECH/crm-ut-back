@@ -1,7 +1,7 @@
 from app.database.db import Base
 from enum import Enum as PyEnum
 from sqlalchemy import String, Boolean, BigInteger, Column, Integer, Enum
-
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class User(Base):
