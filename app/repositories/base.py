@@ -28,15 +28,13 @@ class BaseRepository:
 
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)
-        async with self.session.begin():
-            result = await self.session.execute(stmt)
-        return result.scalars().one()
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def get_all(self, pagination: Pagination) -> list:
         stmt = select(self.model)
         stmt = stmt.order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
-        async with self.session.begin():
-            result = await self.session.execute(stmt)
+        result = await self.session.execute(stmt)
         return result.scalars().all()
 
     async def get_by_id(self, id: int) -> dict:
