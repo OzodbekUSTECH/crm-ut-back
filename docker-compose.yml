@@ -19,7 +19,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8008:8000
-    command: sh -c "alembic upgrade head"
     depends_on:
       - db
 

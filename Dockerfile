@@ -27,5 +27,5 @@ COPY nginx.conf /etc/nginx/sites-enabled/
 EXPOSE 80
 
 # Запускаем Nginx и Gunicorn для приложения FastAPI
-CMD service nginx start && gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app -b 0.0.0.0:8000
+CMD service nginx start && alembic upgrade head && gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app -b 0.0.0.0:8000
 
