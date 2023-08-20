@@ -19,8 +19,10 @@ class UsersService:
 
         hashed_password = PasswordHandler.hash(user_data.password)
 
-        user_dict = user_data.model_dump()
-        user_dict["password"] = hashed_password
+        user_dict = {
+            "email": user_data.email,
+            "password": hashed_password
+        }
         return await self.users_repo.create_one(user_dict)
     
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
