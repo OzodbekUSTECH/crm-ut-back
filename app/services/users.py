@@ -7,7 +7,7 @@ from fastapi import HTTPException, status
 from datetime import timedelta
 from jose import JWTError
 from datetime import datetime
-from utils.exceptions import CustomExceptions
+from app.utils.exceptions import CustomExceptions
 import httpx
 
 class UsersService:
