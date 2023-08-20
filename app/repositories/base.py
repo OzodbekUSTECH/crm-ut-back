@@ -35,13 +35,15 @@ class BaseRepository:
     async def get_all(self, pagination: Pagination) -> list:
         stmt = select(self.model)
         stmt = stmt.order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
-        result = await self.session.execute(stmt)
+        async with self.session.begin():
+            result = await self.session.execute(stmt)
         return result.scalars().all()
 
     async def get_by_id(self, id: int) -> dict:
         stmt = select(self.model).where(self.model.id == id)
-        result = await self.session.execute(stmt)
-        return result.scalar()
+        async with self.session.begin():
+            result = await self.session.execute(stmt)
+        return result.scalars().one()
 
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)
