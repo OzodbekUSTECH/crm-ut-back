@@ -13,7 +13,7 @@ class User(Base):
     password: Mapped[str]
 
     def to_read_model(self):
-        if not self.id:
+        if not self:
             raise CustomExceptions.not_found()
         return UserSchema(
             **self.__dict__
