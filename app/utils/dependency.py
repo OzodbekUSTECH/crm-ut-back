@@ -16,7 +16,10 @@ UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
 async def get_users_services(db: AsyncSession = Depends(get_async_session)):
     pass
     # return UsersService(UsersRepository(session=db, model=User))
+uow = UnitOfWork()
 
+# Создание сервиса пользователей с передачей UnitOfWork
+users_services = UsersService(uow)
 
 
 
@@ -30,7 +33,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/users/login")
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
 ):
-    return await UsersService().get_current_user(token)
+    return await users_services.get_current_user(token)
 
 
 

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_users_services, get_current_user, UOWDep
+from app.utils.dependency import get_users_services, get_current_user, UOWDep, users_services
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -34,7 +34,7 @@ async def login_in(
     - param password: The password of the user.
     - return: Access Token and Type.
     """
-    return await UsersService().authenticate_user(form_data.username, form_data.password)
+    return await users_services.authenticate_user(form_data.username, form_data.password)
 
 
 @router.get('', name="get_all_users", response_model=list[UserSchema])
