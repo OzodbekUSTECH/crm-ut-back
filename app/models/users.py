@@ -13,8 +13,12 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password: Mapped[str]
 
-    created_at: Mapped[datetime] = mapped_column(default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(default=func.now, onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now(),
+    )
 
     def to_read_model(self):
         return UserSchema(
