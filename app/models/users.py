@@ -3,7 +3,7 @@ from enum import Enum as PyEnum
 from sqlalchemy import String, Boolean, BigInteger, Column, Integer, Enum
 from sqlalchemy.orm import Mapped, mapped_column
 from app.schemas.users import UserSchema
-from utils.exceptions import CustomExceptions
+from app.utils.exceptions import CustomExceptions
 
 class User(Base):
     __tablename__ = 'users'
