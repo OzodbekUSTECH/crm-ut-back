@@ -26,8 +26,8 @@ async def create_user(
 
 @router.post('/login', name="get access token", response_model=TokenSchema)
 async def login_in(
+    uow: UOWDep,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    users_service: Annotated[UsersService, Depends(get_users_services)]
 ) -> TokenSchema:
     """
     Get Access Token
@@ -35,7 +35,7 @@ async def login_in(
     - param password: The password of the user.
     - return: Access Token and Type.
     """
-    return await users_service.authenticate_user(form_data.username, form_data.password)
+    return await UsersService().authenticate_user(uow, form_data.username, form_data.password)
 
 
 @router.get('', name="get_all_users", response_model=list[UserSchema])

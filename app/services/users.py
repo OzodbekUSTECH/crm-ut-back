@@ -39,18 +39,19 @@ class UsersService:
     async def delete_user(self, user_id: int) -> UserSchema:
         return await self.users_repo.delete_one(user_id)
 
-    async def authenticate_user(self, email: str, password: str) -> TokenSchema:
-        user = await self.users_repo.get_by_email(email)
-            
-        if not user or not PasswordHandler.verify(password, user.password):
-            raise CustomExceptions.unauthorized("Incorrect email or password")
+    async def authenticate_user(self, uow: UnitOfWork, email: str, password: str) -> TokenSchema:
+        async with uow:
+            user = await uow.users.get_by_email(email)
+                
+            if not user or not PasswordHandler.verify(password, user.password):
+                raise CustomExceptions.unauthorized("Incorrect email or password")
 
-        access_token_expires = timedelta(minutes=JWTHandler.ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token_expires = timedelta(minutes=JWTHandler.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-        access_token = await JWTHandler.create_access_token(
-            data={"id": user.id, "email": user.email}, expires_delta=access_token_expires
-        )
-        return TokenSchema(access_token=access_token, token_type="Bearer")
+            access_token = await JWTHandler.create_access_token(
+                data={"id": user.id, "email": user.email}, expires_delta=access_token_expires
+            )
+            return TokenSchema(access_token=access_token, token_type="Bearer")
 
     
     
