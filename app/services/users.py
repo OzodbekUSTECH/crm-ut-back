@@ -26,8 +26,10 @@ class UsersService:
 
             hashed_password = PasswordHandler.hash(user_data.password)
 
-            user_dict = user_data.model_dump()
-            user_dict["password"] = hashed_password
+            user_dict = {
+                "email": user_data.email,
+                "password": hashed_password
+            }
             created_user = await self.uow.users.create_one(user_dict)
             await self.uow.commit()
             return created_user
