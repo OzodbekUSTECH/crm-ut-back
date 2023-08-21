@@ -29,7 +29,7 @@ class BaseRepository:
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)
         result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return result.scalar_one()
 
     async def get_all(self, pagination: Pagination) -> list:
         stmt = select(self.model).order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
