@@ -45,8 +45,8 @@ class UsersService:
         return await self.users_repo.delete_one(user_id)
 
     async def authenticate_user(self, email: str, password: str) -> TokenSchema:
-        async with self.uow:
-            user = await self.uow.users.get_by_email(email)
+        async with self.uow as uow:
+            user = await uow.users.get_by_email(email)
                 
             if not user or not PasswordHandler.verify(password, user.password):
                 raise CustomExceptions.unauthorized("Incorrect email or password")
@@ -71,9 +71,9 @@ class UsersService:
         except JWTError:
             raise credentials_exception
         
-        async with self.uow:
+        async with self.uow as uow:
 
-            user = await self.uow.users.get_by_email(token_data.email)
+            user = await uow.users.get_by_email(token_data.email)
             
             if user is None:
                 raise credentials_exception
