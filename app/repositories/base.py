@@ -32,30 +32,27 @@ class BaseRepository:
         return result.scalar_one_or_none()
 
     async def get_all(self, pagination: Pagination) -> list:
-        stmt = select(self.model)
-        stmt = stmt.order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
+        stmt = select(self.model).order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
         result = await self.session.execute(stmt)
-        return result.scalars().all()
+        return [r.to_read_model() for r in result.all()]
 
     async def get_by_id(self, id: int) -> dict:
         stmt = select(self.model).where(self.model.id == id)
         result = await self.session.execute(stmt)
-        return result.scalars().one().to_read_model()
+        return result.scalar_one().to_read_model()
 
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)
         result = await self.session.execute(stmt)
-        return result.scalars().one_or_none()
+        return result.scalar_one().to_read_model()
 
     async def update_one(self, id: int, data: dict) -> dict:
         stmt = update(self.model).where(self.model.id == id).values(**data).returning(self.model)
-        async with self.session.begin():
-            result = await self.session.execute(stmt)
-        return result.scalars().one()
-
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+    
     async def delete_one(self, id: int) -> dict:
         stmt = delete(self.model).where(self.model.id == id).returning(self.model)
-        async with self.session.begin():
-            result = await self.session.execute(stmt)
-        return result.scalars().one()
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
     

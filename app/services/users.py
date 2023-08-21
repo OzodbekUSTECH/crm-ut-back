@@ -36,9 +36,7 @@ class UsersService:
         
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
         async with self.uow:
-            users = await self.uow.users.get_all(pagination)
-            await self.uow.commit()
-            return users
+            return await self.uow.users.get_all(pagination)
 
     async def get_user_by_id(self, uow: UnitOfWork, user_id: int):
         async with uow:
@@ -86,7 +84,6 @@ class UsersService:
             raise credentials_exception
         
         async with self.uow:
-
             user = await self.uow.users.get_by_email(token_data.email)
             
             if user is None:
