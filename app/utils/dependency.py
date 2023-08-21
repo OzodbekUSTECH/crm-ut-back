@@ -13,7 +13,6 @@ from app.repositories.unitofwork import UnitOfWork
 
 #services dependencies
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
-users_servicess = UsersService(UOWDep)
 async def get_users_services(db: AsyncSession = Depends(get_async_session)):
     pass
     # return UsersService(UsersRepository(session=db, model=User))
@@ -31,7 +30,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/users/login")
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
 ):
-    return await users_servicess.get_current_user(token)
+    return await UsersService().get_current_user(token)
 
 
 
