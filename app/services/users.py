@@ -14,8 +14,9 @@ from fastapi import Depends
 from typing import Annotated
 
 class UsersService:
-    def __init__(self, uow: UnitOfWork):
-        self.uow = uow
+    uow = UnitOfWork()
+    # def __init__(self, uow: UnitOfWork):
+    #     self.uow = uow
 
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         async with self.uow:
@@ -38,15 +39,22 @@ class UsersService:
             return await self.uow.users.get_all(pagination)
 
     async def get_user_by_id(self, user_id: int) -> UserSchema:
-        return await self.uow.users.get_by_id(user_id)
+        async with self.uow:
+            return await self.uow.users.get_by_id(user_id)
 
     async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
         user_dict = user_data.model_dump()
-        return await self.users_repo.update_one(user_id, user_dict)
+        async with self.uow:
+            updated_user = await self.uow.users.update_one(user_id, user_dict)
+            await self.uow.commit()
+            return updated_user
 
 
     async def delete_user(self, user_id: int) -> UserSchema:
-        return await self.users_repo.delete_one(user_id)
+        async with self.uow:
+            deleted_user = await self.uow.users.delete_one(user_id)
+            await self.uow.commit()
+            return deleted_user
 
     async def authenticate_user(self, email: str, password: str) -> TokenSchema:
         async with self.uow:
@@ -84,8 +92,7 @@ class UsersService:
 
             return user
 
-    async def get_user_by_email(self, email: str) -> UserSchema:
-        return await self.users_repo.get_by_email(email)
+    
     
     async def generate_reset_token(self, email: str) -> str:
         payload = {
@@ -101,8 +108,10 @@ class UsersService:
         password_dict = {
             "password": hashed_password
         }
-        return await self.users_repo.update_one(user.id, password_dict)
-        
+        async with self.uow:
+            user_instance = await self.uow.users.update_one(user.id, password_dict)
+            await self.uow.commit()
+            return user_instance
 
     
     # async def parse_all_users(self, url: str):
