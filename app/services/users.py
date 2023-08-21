@@ -95,7 +95,7 @@ class UsersService:
             if user is None:
                 raise credentials_exception
 
-            return user
+            return user.to_read_model()
 
     
     
