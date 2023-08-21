@@ -19,7 +19,7 @@ async def get_users_services(db: AsyncSession = Depends(get_async_session)):
 uow = UnitOfWork()
 
 # Создание сервиса пользователей с передачей UnitOfWork
-users_services = UsersService(uow)
+users_services = UsersService(UOWDep)
 
 
 
