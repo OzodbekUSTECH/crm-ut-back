@@ -60,11 +60,11 @@ async def get_own_user_data(
     return current_user
 
 
-@router.get('/{user_id}', name="get user by ID")
+@router.get('/{user_id}', name="get user by ID", response_model=UserSchema)
 async def get_user_data_by_id(
     user_id: int,
     uow: UOWDep
-):
+) -> UserSchema:
     """
     Get User By ID:
     - param user_id: The ID of the user to get.

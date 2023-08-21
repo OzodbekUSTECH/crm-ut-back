@@ -40,7 +40,8 @@ class UsersService:
 
     async def get_user_by_id(self, uow: UnitOfWork, user_id: int):
         async with uow:
-            return await uow.users.get_by_id(user_id)
+            user = await uow.users.get_by_id(user_id)
+            return user
 
     async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
         user_dict = user_data.model_dump()
