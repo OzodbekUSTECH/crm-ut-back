@@ -16,13 +16,12 @@ router = APIRouter(
 @router.post('', name="Registration", response_model=UserSchema)
 async def create_user(
     user_data: UserCreateSchema,
-    users_service: Annotated[UsersService, Depends(get_users_services)]
 ) -> UserSchema:
     """
     Create User:
     - return: User data.
     """
-    return await users_service.register_user(user_data) 
+    return await users_services.register_user(user_data) 
 
 @router.post('/login', name="get access token", response_model=TokenSchema)
 async def login_in(
@@ -48,8 +47,7 @@ async def get_all_users_data(
     - param page_size: The quantity of users per page.
     - return: list of all users.
     """
-    users = await users_service.get_all_users(pagination)
-    return users
+    return await users_services.get_all_users(pagination)
 
 
 @router.get('/me', name="get own user data", response_model=UserSchema)
@@ -73,7 +71,7 @@ async def get_user_data_by_id(
     - param user_id: The ID of the user to get.
     - return: User data.
     """
-    return await users_service.get_user_by_id(user_id)
+    return await users_services.get_user_by_id(user_id)
 
 
 
