@@ -29,7 +29,7 @@ class BaseRepository:
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)
         result = await self.session.execute(stmt)
-        return result.scalars().one()
+        return result.scalar_one_or_none()
 
     async def get_all(self, pagination: Pagination) -> list:
         stmt = select(self.model)
@@ -39,7 +39,8 @@ class BaseRepository:
 
     async def get_by_id(self, id: int) -> dict:
         stmt = select(self.model).where(self.model.id == id)
-        result = await self.session.execute(stmt)
+        async with self.session.begin():
+            result = await self.session.execute(stmt)
         return result.scalars().one()
 
     async def get_by_email(self, email: str) -> dict:
