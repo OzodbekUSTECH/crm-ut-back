@@ -44,7 +44,9 @@ class BaseRepository:
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)
         result = await self.session.execute(stmt)
-        return result.scalar_one_or_none() #dont use to_read_model since it should return all the data of the model cause need to verify password for func authenticate user(in usersService)
+        #dont use to_read_model since it should return all the data of the model cause need to verify password for func authenticate user(in usersService)
+        #you can use to_read_model() for this method in another place where you get the instance
+        return result.scalar_one_or_none() 
 
     async def update_one(self, id: int, data: dict) -> dict:
         stmt = update(self.model).where(self.model.id == id).values(**data).returning(self.model)

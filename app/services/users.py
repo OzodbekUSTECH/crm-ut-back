@@ -45,6 +45,10 @@ class UsersService:
     async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
         user_dict = user_data.model_dump()
         async with self.uow:
+            existing_user = await self.uow.users.get_by_email(user_data.email)
+            if existing_user:
+                raise CustomExceptions.conflict("Already exists user with this email")
+
             updated_user = await self.uow.users.update_one(user_id, user_dict)
             await self.uow.commit()
             return updated_user
