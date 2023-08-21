@@ -69,7 +69,7 @@ async def get_user_data_by_id(
     - param user_id: The ID of the user to get.
     - return: User data.
     """
-    return await users_service.get_user_by_id(user_id)
+    return await UsersService().get_user_by_id(user_id)
 
 
 
