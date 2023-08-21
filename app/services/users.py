@@ -10,8 +10,13 @@ from datetime import datetime
 from app.utils.exceptions import CustomExceptions
 import httpx
 from app.repositories.unitofwork import UnitOfWork
+from fastapi import Depends
 
 class UsersService:
+
+    def __init__(self, uow: UnitOfWork = Depends()):
+        self.uow = uow
+
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         existing_user = await self.users_repo.get_by_email(user_data.email)
         if existing_user:
@@ -39,9 +44,9 @@ class UsersService:
     async def delete_user(self, user_id: int) -> UserSchema:
         return await self.users_repo.delete_one(user_id)
 
-    async def authenticate_user(self, uow: UnitOfWork, email: str, password: str) -> TokenSchema:
-        async with uow:
-            user = await uow.users.get_by_email(email)
+    async def authenticate_user(self, email: str, password: str) -> TokenSchema:
+        async with self.uow:
+            user = await self.uow.users.get_by_email(email)
                 
             if not user or not PasswordHandler.verify(password, user.password):
                 raise CustomExceptions.unauthorized("Incorrect email or password")
@@ -55,7 +60,7 @@ class UsersService:
 
     
     
-    async def get_current_user(self, uow: UnitOfWork, token: str) -> UserSchema:
+    async def get_current_user(self, token: str) -> UserSchema:
         credentials_exception = CustomExceptions.unauthorized("Could not validate credentials")
         try:
             payload = await JWTHandler.decode(token)
@@ -66,9 +71,9 @@ class UsersService:
         except JWTError:
             raise credentials_exception
         
-        async with uow:
+        async with self.uow:
 
-            user = await uow.users.get_by_email(token_data.email)
+            user = await self.uow.users.get_by_email(token_data.email)
             
             if user is None:
                 raise credentials_exception
