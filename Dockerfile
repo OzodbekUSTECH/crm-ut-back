@@ -2,7 +2,6 @@
 FROM python:3.11.1-slim
 
 # Set the timezone to Asia/Tashkent
-ENV TZ=Asia/Tashkent
 
 # set work directory
 WORKDIR /code
@@ -18,6 +17,8 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
+
+ENV TZ=Asia/Tashkent
 
 RUN apt-get update && \
     apt-get install -y nginx && \
