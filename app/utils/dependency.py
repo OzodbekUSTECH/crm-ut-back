@@ -14,7 +14,8 @@ from app.repositories.unitofwork import UnitOfWork
 #services dependencies
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
 async def get_users_services(db: AsyncSession = Depends(get_async_session)):
-    return UsersService(UsersRepository(session=db, model=User))
+    pass
+    # return UsersService(UsersRepository(session=db, model=User))
 
 
 
@@ -30,7 +31,7 @@ async def get_current_user(
     uow: UOWDep,
     token: str = Depends(oauth2_scheme),
 ):
-    return await UsersService().get_current_user(token)
+    return await UsersService().get_current_user(uow, token)
 
 
 
