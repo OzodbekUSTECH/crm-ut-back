@@ -18,23 +18,27 @@ class UsersService:
         self.uow = uow
 
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
-        existing_user = await self.users_repo.get_by_email(user_data.email)
-        if existing_user:
-            raise CustomExceptions.conflict("Already exists user with this email")
+        async with self.uow:
+            existing_user = await self.uow.users.get_by_email(user_data.email)
+            if existing_user:
+                raise CustomExceptions.conflict("Already exists user with this email")
 
-        hashed_password = PasswordHandler.hash(user_data.password)
+            hashed_password = PasswordHandler.hash(user_data.password)
 
-        user_dict = {
-            "email": user_data.email,
-            "password": hashed_password
-        }
-        return await self.users_repo.create_one(user_dict)
-    
+            user_dict = {
+                "email": user_data.email,
+                "password": hashed_password
+            }
+            created_user = await self.uow.users.create_one(user_dict)
+            await self.uow.commit()
+            return created_user
+        
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
-        return await self.users_repo.get_all(pagination)
+        async with self.uow:
+            return await self.uow.users.get_all(pagination)
 
     async def get_user_by_id(self, user_id: int) -> UserSchema:
-        return await self.users_repo.get_by_id(user_id)
+        return await self.uow.users.get_by_id(user_id)
 
     async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
         user_dict = user_data.model_dump()

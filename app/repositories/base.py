@@ -28,8 +28,7 @@ class BaseRepository:
 
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)
-        async with self.session.begin():
-            result = await self.session.execute(stmt)
+        result = await self.session.execute(stmt)
         return result.scalars().one()
 
     async def get_all(self, pagination: Pagination) -> list:
