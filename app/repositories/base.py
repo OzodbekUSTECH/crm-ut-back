@@ -34,12 +34,12 @@ class BaseRepository:
     async def get_all(self, pagination: Pagination) -> list:
         stmt = select(self.model).order_by(self.model.id).offset(pagination.offset).limit(pagination.limit)
         result = await self.session.execute(stmt)
-        return [r[0].to_read_model() for r in result.all()]
+        return result.all()
 
     async def get_by_id(self, id: int) -> dict:
         stmt = select(self.model).where(self.model.id == id)
         result = await self.session.execute(stmt)
-        return result.scalar_one_or_none().to_read_model()
+        return result.first()
 
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)

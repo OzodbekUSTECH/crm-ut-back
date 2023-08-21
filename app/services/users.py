@@ -36,7 +36,8 @@ class UsersService:
         
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
         async with self.uow:
-            return await self.uow.users.get_all(pagination)
+            users = await self.uow.users.get_all(pagination)
+            return [user[0].to_read_model() for user in users]
 
     async def get_user_by_id(self, user_id: int):
         async with self.uow:
