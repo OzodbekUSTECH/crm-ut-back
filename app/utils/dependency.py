@@ -12,14 +12,12 @@ from app.repositories.unitofwork import UnitOfWork
 
 
 #services dependencies
-UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
 async def get_users_services(db: AsyncSession = Depends(get_async_session)):
     pass
     # return UsersService(UsersRepository(session=db, model=User))
-uow = UnitOfWork()
 
 # Создание сервиса пользователей с передачей UnitOfWork
-users_services = UsersService(UOWDep)
+users_services = UsersService(UnitOfWork())
 
 
 

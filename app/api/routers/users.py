@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_users_services, get_current_user, UOWDep, users_services
+from app.utils.dependency import get_users_services, get_current_user, users_services
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
