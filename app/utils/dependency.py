@@ -7,7 +7,7 @@ from typing import Annotated
 from app.database.db import get_async_session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from repositories.unitofwork import UnitOfWork
+from app.repositories.unitofwork import UnitOfWork
 
 
 #services dependencies
