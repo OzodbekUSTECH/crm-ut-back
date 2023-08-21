@@ -1,7 +1,7 @@
 import re
 from pydantic import BaseModel, EmailStr, field_validator, constr, validator
 from typing import Optional
-
+from datetime import datetime
 
 
 class UserCreateSchema(BaseModel):
@@ -46,8 +46,10 @@ class UserSchema(BaseModel):
     id: int
     email: str
 
-    class ConfigDict:
-        from_attributes = True
+    created_at: datetime
+    updated_at: datetime
+
+    
 
 
 

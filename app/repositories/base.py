@@ -21,6 +21,10 @@ class Pagination:
 
 
 class BaseRepository:
+    """
+    Dont use 'to_read_model()' method in order to get full info of model despite the schema
+    and also use any information in services
+    """
     def __init__(self, session: AsyncSession, model:DeclarativeMeta, current_user: User = None):
         self.session = session
         self.model = model
@@ -44,8 +48,6 @@ class BaseRepository:
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)
         result = await self.session.execute(stmt)
-        #dont use to_read_model since it should return all the data of the model cause need to verify password for func authenticate user(in usersService)
-        #you can use to_read_model() for this method in another place where you get the instance
         return result.scalar_one_or_none() 
 
     async def update_one(self, id: int, data: dict) -> dict:
