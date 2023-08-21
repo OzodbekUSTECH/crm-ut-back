@@ -9,11 +9,9 @@ from jose import JWTError
 from datetime import datetime
 from app.utils.exceptions import CustomExceptions
 import httpx
+from app.repositories.unitofwork import UnitOfWork
 
 class UsersService:
-    def __init__(self, users_repo: UsersRepository):
-        self.users_repo: UsersRepository = users_repo
-
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         existing_user = await self.users_repo.get_by_email(user_data.email)
         if existing_user:
@@ -56,7 +54,7 @@ class UsersService:
 
     
     
-    async def get_current_user(self, token: str) -> UserSchema:
+    async def get_current_user(self, uow: UnitOfWork, token: str) -> UserSchema:
         credentials_exception = CustomExceptions.unauthorized("Could not validate credentials")
         try:
             payload = await JWTHandler.decode(token)
@@ -67,12 +65,14 @@ class UsersService:
         except JWTError:
             raise credentials_exception
         
-        user = await self.users_repo.get_by_email(token_data.email)
-        
-        if user is None:
-            raise credentials_exception
+        async with uow:
 
-        return user
+            user = await uow.users.get_by_email(token_data.email)
+            
+            if user is None:
+                raise credentials_exception
+
+            return user
 
     async def get_user_by_email(self, email: str) -> UserSchema:
         return await self.users_repo.get_by_email(email)

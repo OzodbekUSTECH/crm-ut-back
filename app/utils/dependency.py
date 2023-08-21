@@ -1,19 +1,19 @@
-from app.models import User
+# from app.models import User
 
 from app.repositories.users import UsersRepository
 from app.services.users import UsersService
-
+from typing import Annotated
 
 from app.database.db import get_async_session
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
+from repositories.unitofwork import UnitOfWork
 
 
 #services dependencies
-
-async def get_users_services(db: Session = Depends(get_async_session)):
-    return UsersService(UsersRepository(session=db, model=User))
+UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
+# async def get_users_services(db: Session = Depends(get_async_session)):
+#     return UsersService(UsersRepository(session=db, model=User))
 
 
 
@@ -26,11 +26,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/users/login")
 
 
 async def get_current_user(
+    uow: UOWDep,
     token: str = Depends(oauth2_scheme),
-    users_service: UsersService = Depends(get_users_services)
 ):
-    print(token)
-    return await users_service.get_current_user(token)
+    return await UsersService().get_current_user(token)
 
 
 
