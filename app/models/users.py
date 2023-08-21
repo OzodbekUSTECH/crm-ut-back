@@ -3,6 +3,7 @@ from enum import Enum as PyEnum
 from sqlalchemy import String, Boolean, BigInteger, Column, Integer, Enum
 from sqlalchemy.orm import Mapped, mapped_column
 from app.schemas.users import UserSchema
+from utils.exceptions import CustomExceptions
 
 class User(Base):
     __tablename__ = 'users'
@@ -12,8 +13,8 @@ class User(Base):
     password: Mapped[str]
 
     def to_read_model(self):
-        if self.id is None:
-            return None
+        if not self.id:
+            raise CustomExceptions.not_found()
         return UserSchema(
             **self.__dict__
         )
