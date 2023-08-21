@@ -38,7 +38,7 @@ class UsersService:
         async with self.uow:
             return await self.uow.users.get_all(pagination)
 
-    async def get_user_by_id(self, uow: UnitOfWork, user_id: int) -> UserSchema:
+    async def get_user_by_id(self, uow: UnitOfWork, user_id: int):
         async with uow:
             return await uow.users.get_by_id(user_id)
 
