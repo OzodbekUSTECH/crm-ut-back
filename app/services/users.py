@@ -36,13 +36,13 @@ class UsersService:
         
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
         async with self.uow:
-            return await self.uow.users.get_all(pagination)
+            users = await self.uow.users.get_all(pagination)
+            await self.uow.commit()
+            return users
 
     async def get_user_by_id(self, uow: UnitOfWork, user_id: int):
         async with uow:
-            user = await uow.users.get_by_id(user_id)
-            await uow.commit()
-            return user
+            return await uow.users.get_by_id(user_id)
 
     async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
         user_dict = user_data.model_dump()

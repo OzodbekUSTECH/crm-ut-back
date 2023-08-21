@@ -40,7 +40,7 @@ class BaseRepository:
     async def get_by_id(self, id: int) -> dict:
         stmt = select(self.model).where(self.model.id == id)
         result = await self.session.execute(stmt)
-        return result.scalars().one()
+        return result.scalars().one().to_read_model()
 
     async def get_by_email(self, email: str) -> dict:
         stmt = select(self.model).where(self.model.email == email)
