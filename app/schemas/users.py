@@ -58,6 +58,7 @@ class TokenSchema(BaseModel):
     
     
 class TokenData(BaseModel):
+    id: int
     email: str
 
 

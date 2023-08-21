@@ -76,15 +76,15 @@ class UsersService:
         credentials_exception = CustomExceptions.unauthorized("Could not validate credentials")
         try:
             payload = await JWTHandler.decode(token)
-            email: str = payload.get("email")  # "sub" is the key used by JWT to represent the subject (usually user ID or email)
-            if email is None:
+            user_id: int = payload.get("id")  
+            if user_id is None:
                 raise credentials_exception
-            token_data = TokenData(email=email)
+            token_data = TokenData(id=user_id)
         except JWTError:
             raise credentials_exception
         
         async with self.uow:
-            user = await self.uow.users.get_by_email(token_data.email)
+            user = await self.uow.users.get_by_id(token_data.id)
             
             if user is None:
                 raise credentials_exception
