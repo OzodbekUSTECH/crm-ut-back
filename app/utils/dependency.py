@@ -1,8 +1,9 @@
-# from app.models import User
+from app.models import User
 
 from app.repositories.users import UsersRepository
 from app.services.users import UsersService
 from typing import Annotated
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_async_session
 from fastapi import Depends, HTTPException, status
@@ -12,8 +13,8 @@ from app.repositories.unitofwork import UnitOfWork
 
 #services dependencies
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
-# async def get_users_services(db: Session = Depends(get_async_session)):
-#     return UsersService(UsersRepository(session=db, model=User))
+async def get_users_services(db: AsyncSession = Depends(get_async_session)):
+    return UsersService(UsersRepository(session=db, model=User))
 
 
 
