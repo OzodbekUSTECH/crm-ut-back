@@ -15,10 +15,10 @@ class User(Base):
     password: Mapped[str]
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(pytz.timezone('Asia/Tashkent'))
+        DateTime(timezone=True), server_default=datetime.now(tz=pytz.timezone('Asia/Tashkent'))
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(pytz.timezone('Asia/Tashkent')), server_onupdate=func.now(pytz.timezone('Asia/Tashkent')),
+        DateTime(timezone=True), server_default=datetime.now(tz=pytz.timezone('Asia/Tashkent')), server_onupdate=datetime.now(tz=pytz.timezone('Asia/Tashkent')),
     )
 
     def to_read_model(self):
