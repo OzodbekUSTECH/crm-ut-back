@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from app.models import Base
 
 config = context.config
-config.set_main_option("sqlalchemy.url", "postgresql+asyncpg://postgres:77girado@db/postgres")
+config.set_main_option("sqlalchemy.url", "postgresql+asyncpg://postgres:77girado@localhost/postgres")
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
