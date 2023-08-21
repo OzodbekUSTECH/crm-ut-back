@@ -17,7 +17,7 @@ async def get_users_services(db: AsyncSession = Depends(get_async_session)):
     # return UsersService(UsersRepository(session=db, model=User))
 
 # Создание сервиса пользователей с передачей UnitOfWork
-users_service = UsersService(UnitOfWork())
+users_service = UsersService()
 
 
 
