@@ -46,6 +46,9 @@ class UserSchema(BaseModel):
     id: int
     email: str
 
+    class ConfigDict:
+        from_attributes = True
+
 
 
 
