@@ -1,24 +1,20 @@
 from app.models import User
-
+from typing import Annotated
 from app.repositories.users import UsersRepository
 from app.services.users import UsersService
-from typing import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
+
 
 from app.database.db import get_async_session
 from fastapi import Depends, HTTPException, status
+from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from app.repositories.unitofwork import UnitOfWork
 
-
 #services dependencies
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
-async def get_users_services(db: AsyncSession = Depends(get_async_session)):
-    pass
+async def get_users_services(db: Session = Depends(get_async_session)):
     # return UsersService(UsersRepository(session=db, model=User))
-uow = UnitOfWork()
-
-# Создание сервиса пользователей с передачей UnitOfWork
+    pass
 users_service = UsersService()
 
 

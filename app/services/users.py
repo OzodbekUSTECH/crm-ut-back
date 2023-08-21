@@ -31,7 +31,7 @@ class UsersService:
                 "password": hashed_password
             }
             created_user = await self.uow.users.create_one(user_dict)
-            await self.uow.commit()
+            await self.uow.rollback()
             return created_user
         
     async def get_all_users(self, pagination: Pagination) -> list[UserSchema]:
