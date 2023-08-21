@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_current_user, users_service
+from app.utils.dependency import get_current_user, users_service, UOWDep
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -62,14 +62,15 @@ async def get_own_user_data(
 
 @router.get('/{user_id}', name="get user by ID", response_model=UserSchema)
 async def get_user_data_by_id(
-    user_id: int
+    user_id: int,
+    uow: UOWDep
 ) -> UserSchema:
     """
     Get User By ID:
     - param user_id: The ID of the user to get.
     - return: User data.
     """
-    return await UsersService().get_user_by_id(user_id)
+    return await UsersService().get_user_by_id(uow,user_id)
 
 
 
