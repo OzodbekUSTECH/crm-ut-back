@@ -12,7 +12,7 @@ class User(Base):
     password: Mapped[str]
 
     def to_read_model(self):
-        if not self.id:
+        if self.id is None:
             return None
         return UserSchema(
             **self.__dict__
