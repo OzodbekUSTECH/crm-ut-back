@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import UOWDep, get_current_user
+from app.utils.dependency import get_current_user
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -16,7 +16,6 @@ router = APIRouter(
 @router.post('', name="Registration", response_model=UserSchema)
 async def create_user(
     user_data: UserCreateSchema,
-    uow: UOWDep,
 ) -> UserSchema:
     """
     Create User:
