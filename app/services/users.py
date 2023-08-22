@@ -14,9 +14,8 @@ from fastapi import Depends
 from typing import Annotated
 
 class UsersService:
-    uow = UnitOfWork()
-    # def __init__(self, uow: UnitOfWork):
-    #     self.uow = uow
+    def __init__(self, uow: UnitOfWork):
+        self.uow = uow
 
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         async with self.uow:

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_current_user
+from app.utils.dependency import get_current_user, UOWDep, get_users_service
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -16,12 +16,13 @@ router = APIRouter(
 @router.post('', name="Registration", response_model=UserSchema)
 async def create_user(
     user_data: UserCreateSchema,
+    user_service: UsersService = Depends(get_users_service)
 ) -> UserSchema:
     """
     Create User:
     - return: User data.
     """
-    return await UsersService().register_user(user_data) 
+    return await user_service.register_user(user_data) 
 
 @router.post('/login', name="get access token", response_model=TokenSchema)
 async def login_in(
@@ -38,7 +39,8 @@ async def login_in(
 
 @router.get('', name="get_all_users", response_model=list[UserSchema])
 async def get_all_users_data(
-    pagination: Annotated[Pagination, Depends()]
+    pagination: Annotated[Pagination, Depends()],
+    user_service: Annotated[UsersService, Depends(get_users_service)],
 ) -> list[UserSchema]:
     """
     Get All Users Data:
@@ -46,7 +48,7 @@ async def get_all_users_data(
     - param page_size: The quantity of users per page.
     - return: list of all users.
     """
-    return await UsersService().get_all_users(pagination)
+    return await user_service.get_all_users(pagination)
 
 
 @router.get('/me', name="get own user data", response_model=UserSchema)

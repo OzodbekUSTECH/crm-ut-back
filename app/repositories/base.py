@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta
 from fastapi import Query
 from sqlalchemy import insert, select, update, delete
 from app.models import User
+from fastapi import Depends
 
 
 class Pagination:
@@ -25,7 +26,7 @@ class BaseRepository:
     Dont use 'to_read_model()' method in order to get full info of model despite the schema
     and also use any information in services
     """
-    def __init__(self, session: AsyncSession, model:DeclarativeMeta, current_user: User = None):
+    def __init__(self, session: AsyncSession, model:DeclarativeMeta, current_user: User):
         self.session = session
         self.model = model
         self.current_user = current_user

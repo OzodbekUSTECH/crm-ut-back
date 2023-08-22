@@ -1,24 +1,13 @@
-from app.models import User
 from typing import Annotated
 from app.services.users import UsersService
 
 
-from app.database.db import get_async_session
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from app.repositories.unitofwork import UnitOfWork
 
-#services dependencies
-async def get_users_services(db: Session = Depends(get_async_session)):
-    # return UsersService(UsersRepository(session=db, model=User))
-    pass
-users_service = UsersService()
 
-
-
-
-
+UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/users/login")
@@ -29,8 +18,9 @@ async def get_current_user(
 ):
     return await UsersService().get_current_user(token)
 
-UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
 
+async def get_users_service(uow: UOWDep, current_user = Depends(get_current_user)):
+    return UsersService(uow(current_user))
 
 class RoleChecker:
     def __init__(self, roles: list[str]):

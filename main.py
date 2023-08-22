@@ -30,4 +30,4 @@ app.add_middleware(
 #     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app --host 0.0.0.0", reload=True)
+    uvicorn.run(app="main:app", reload=True)
