@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_current_user, users_service, UOWDep
+from app.utils.dependency import UOWDep, get_current_user
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -21,7 +21,7 @@ async def create_user(
     Create User:
     - return: User data.
     """
-    return await users_service.register_user(user_data) 
+    return await UsersService().register_user(user_data) 
 
 @router.post('/login', name="get access token", response_model=TokenSchema)
 async def login_in(
@@ -46,7 +46,7 @@ async def get_all_users_data(
     - param page_size: The quantity of users per page.
     - return: list of all users.
     """
-    return await users_service.get_all_users(pagination)
+    return await UsersService().get_all_users(pagination)
 
 
 @router.get('/me', name="get own user data", response_model=UserSchema)
@@ -83,7 +83,7 @@ async def update_user_data(
     - param user_id: The ID of the user to update.
     - return: Updated user data.
     """
-    return await users_service.update_user(user_id, user_data)
+    return await UsersService().update_user(user_id, user_data)
 
 
 @router.delete('/{user_id}', name="delete user data", response_model=UserSchema)
@@ -95,7 +95,7 @@ async def delete_user_data(
     - param user_id: The id of the user to delete.
     - return: User data.
     """
-    return await users_service.delete_user(user_id)
+    return await UsersService().delete_user(user_id)
 
 # @router.post('/forgot/password', tags=["Auth"], name="forgot password")
 # async def forgot_password(
