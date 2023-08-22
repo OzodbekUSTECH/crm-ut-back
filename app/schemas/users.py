@@ -2,7 +2,7 @@ import re
 from pydantic import BaseModel, EmailStr, field_validator, constr, validator
 from typing import Optional
 from datetime import datetime
-
+import pytz
 
 class UserCreateSchema(BaseModel):
     email: EmailStr
@@ -49,7 +49,10 @@ class UserSchema(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    
+    class Config:
+        json_encoders = {
+            datetime: lambda dt: dt.astimezone(pytz.timezone('Asia/Tashkent')).isoformat()
+        }
 
 
 
