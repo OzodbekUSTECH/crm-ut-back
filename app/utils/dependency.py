@@ -20,7 +20,7 @@ async def get_current_user(
 
 
 async def get_users_service(uow: UOWDep, current_user = Depends(get_current_user)):
-    return UsersService(uow(current_user))
+    return UsersService(uow, current_user=current_user)
 
 class RoleChecker:
     def __init__(self, roles: list[str]):

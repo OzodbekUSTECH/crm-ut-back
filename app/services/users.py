@@ -12,10 +12,12 @@ import httpx
 from app.repositories.unitofwork import UnitOfWork
 from fastapi import Depends
 from typing import Annotated
+from app.models import User
 
 class UsersService:
-    def __init__(self, uow: UnitOfWork):
+    def __init__(self, uow: UnitOfWork, current_user: User):
         self.uow = uow
+        self.current_user = current_user
 
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         async with self.uow:
