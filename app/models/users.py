@@ -13,12 +13,11 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password: Mapped[str]
-
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=pytz.timezone('Asia/Tashkent')), server_default=func.now()
+        DateTime(timezone=True), server_default=datetime.now(tz=pytz.timezone('Asia/Tashkent'))
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=pytz.timezone('Asia/Tashkent')), server_default=func.now(), server_onupdate=func.now(),
+        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now(),
     )
 
     def to_read_model(self):
