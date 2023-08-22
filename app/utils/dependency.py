@@ -50,7 +50,6 @@ class RoleChecker:
         return True
     
 
-
 class UnitOfWork:
     users: Type[UsersRepository]
 
@@ -70,5 +69,4 @@ class UnitOfWork:
 
     async def rollback(self):
         await self.session.rollback()
-        
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]

@@ -16,6 +16,7 @@ router = APIRouter(
 @router.post('', name="Registration", response_model=UserSchema)
 async def create_user(
     user_data: UserCreateSchema,
+    uow: UOWDep,
 ) -> UserSchema:
     """
     Create User:
