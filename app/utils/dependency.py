@@ -8,19 +8,21 @@ from app.repositories.unitofwork import UnitOfWork
 
 
 UOWDep = Annotated[UnitOfWork, Depends(UnitOfWork)]
-
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/users/login")
 
 
+
+
+async def get_users_service(uow: UOWDep):
+    return UsersService(uow)
+
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    token: Annotated[str, Depends(oauth2_scheme)],
+    user_service: Annotated[UsersService, Depends(get_users_service)]
 ):
-    return await UsersService().get_current_user(token)
+    return await user_service.get_current_user(token)
 
 
-async def get_users_service(uow: UOWDep, current_user = Depends(get_current_user)):
-    return UsersService(uow, current_user=current_user)
 
 class RoleChecker:
     def __init__(self, roles: list[str]):

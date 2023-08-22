@@ -8,16 +8,15 @@ from datetime import timedelta
 from jose import JWTError
 from datetime import datetime
 from app.utils.exceptions import CustomExceptions
+from app.models import User
 import httpx
 from app.repositories.unitofwork import UnitOfWork
-from fastapi import Depends
-from typing import Annotated
-from app.models import User
+from app.utils.permissions import has_permission
 
 class UsersService:
-    def __init__(self, uow: UnitOfWork, current_user: User):
+    def __init__(self, uow: UnitOfWork):
         self.uow = uow
-        self.current_user = current_user
+        
 
     async def register_user(self, user_data: UserCreateSchema) -> UserSchema:
         async with self.uow:
@@ -45,7 +44,13 @@ class UsersService:
             user = await self.uow.users.get_by_id(user_id)
             return user.to_read_model()
 
-    async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> UserSchema:
+    async def update_user(
+            self, 
+            user_id: int, 
+            user_data: UserUpdateSchema,
+            current_user: User
+        ) -> UserSchema:
+        await has_permission.is_id_belongs_to_current_user(user_id, current_user)
         user_dict = user_data.model_dump()
         async with self.uow:
             existing_user = await self.uow.users.get_by_email(user_data.email)
@@ -57,7 +62,9 @@ class UsersService:
             return updated_user
 
 
-    async def delete_user(self, user_id: int) -> UserSchema:
+    async def delete_user(self, user_id: int, current_user: User) -> UserSchema:
+        await has_permission.is_id_belongs_to_current_user(user_id, current_user)
+
         async with self.uow:
             deleted_user = await self.uow.users.delete_one(user_id)
             await self.uow.commit()

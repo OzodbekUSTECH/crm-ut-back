@@ -1,8 +1,8 @@
 from typing import Annotated
-
+from app.models import User
 from fastapi import APIRouter, Depends
 from app.services.users import UsersService
-from app.utils.dependency import get_current_user, UOWDep, get_users_service
+from app.utils.dependency import get_current_user, get_users_service
 from app.schemas.users import UserCreateSchema, UserSchema, UserUpdateSchema, TokenSchema, ResetPasswordSchema
 from app.repositories.base import Pagination
 from fastapi.security import OAuth2PasswordRequestForm
@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post('', name="Registration", response_model=UserSchema)
 async def create_user(
     user_data: UserCreateSchema,
-    user_service: UsersService = Depends(get_users_service)
+    user_service: Annotated[UsersService, Depends(get_users_service)],
 ) -> UserSchema:
     """
     Create User:
@@ -27,6 +27,7 @@ async def create_user(
 @router.post('/login', name="get access token", response_model=TokenSchema)
 async def login_in(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    user_service: Annotated[UsersService, Depends(get_users_service)],
 ) -> TokenSchema:
     """
     Get Access Token
@@ -34,7 +35,7 @@ async def login_in(
     - param password: The password of the user.
     - return: Access Token and Type.
     """
-    return await UsersService().authenticate_user(form_data.username, form_data.password)
+    return await user_service.authenticate_user(form_data.username, form_data.password)
 
 
 @router.get('', name="get_all_users", response_model=list[UserSchema])
@@ -53,7 +54,7 @@ async def get_all_users_data(
 
 @router.get('/me', name="get own user data", response_model=UserSchema)
 async def get_own_user_data(
-    current_user = Depends(get_current_user),
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> UserSchema:
     """
     Get Own User Data
@@ -65,13 +66,14 @@ async def get_own_user_data(
 @router.get('/{user_id}', name="get user by ID", response_model=UserSchema)
 async def get_user_data_by_id(
     user_id: int,
+    user_service: Annotated[UsersService, Depends(get_users_service)],
 ) -> UserSchema:
     """
     Get User By ID:
     - param user_id: The ID of the user to get.
     - return: User data.
     """
-    return await UsersService().get_user_by_id(user_id)
+    return await user_service.get_user_by_id(user_id)
 
 
 
@@ -79,25 +81,29 @@ async def get_user_data_by_id(
 async def update_user_data(
     user_id: int, 
     user_data: UserUpdateSchema,
+    user_service: Annotated[UsersService, Depends(get_users_service)],
+    current_user: Annotated[User, Depends(get_current_user)]
 ) -> UserSchema:
     """
     Update User Data
     - param user_id: The ID of the user to update.
     - return: Updated user data.
     """
-    return await UsersService().update_user(user_id, user_data)
+    return await user_service.update_user(user_id, user_data, current_user)
 
 
 @router.delete('/{user_id}', name="delete user data", response_model=UserSchema)
 async def delete_user_data(
     user_id: int,
+    user_service: Annotated[UsersService, Depends(get_users_service)],
+    current_user: Annotated[User, Depends(get_current_user)]
 ) -> UserSchema:
     """
     Delete User:
     - param user_id: The id of the user to delete.
     - return: User data.
     """
-    return await UsersService().delete_user(user_id)
+    return await user_service.delete_user(user_id, current_user)
 
 # @router.post('/forgot/password', tags=["Auth"], name="forgot password")
 # async def forgot_password(
