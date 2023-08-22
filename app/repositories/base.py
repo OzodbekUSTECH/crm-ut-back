@@ -26,10 +26,9 @@ class BaseRepository:
     Dont use 'to_read_model()' method in order to get full info of model despite the schema
     and also use any information in services
     """
-    def __init__(self, session: AsyncSession, model:DeclarativeMeta, current_user: User):
+    def __init__(self, session: AsyncSession, model:DeclarativeMeta):
         self.session = session
         self.model = model
-        self.current_user = current_user
 
     async def create_one(self, data: dict) -> dict:
         stmt = insert(self.model).values(**data).returning(self.model)
