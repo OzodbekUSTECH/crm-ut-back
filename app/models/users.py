@@ -6,6 +6,8 @@ from app.schemas.users import UserSchema
 from app.utils.exceptions import CustomExceptions
 from datetime import datetime
 import pytz
+from sqlalchemy import text
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -14,7 +16,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=datetime.now(tz=pytz.timezone('Asia/Tashkent'))
+        DateTime(timezone=True), server_default=text(f"timezone('Asia/Tashkent', {func.now()})")
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now(),
