@@ -15,10 +15,10 @@ class User(Base):
     password: Mapped[str]
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=datetime.now
+       server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=datetime.now, server_onupdate=datetime.now,
+        server_default=func.now(), server_onupdate=func.now(),
     )
 
     def to_read_model(self):
