@@ -49,7 +49,7 @@ class UserSchema(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class ConfigDict:
+    class Config:
         json_encoders = {
             datetime: lambda dt: dt.astimezone(pytz.timezone('Asia/Tashkent')).isoformat()
         }
