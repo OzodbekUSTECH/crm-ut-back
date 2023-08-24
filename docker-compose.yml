@@ -17,8 +17,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:  # Add this block to set environment variables for the web service
-      TZ: Asia/Tashkent
     ports:
       - 8008:8000
     depends_on:
